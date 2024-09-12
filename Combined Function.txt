@@ -1,0 +1,125 @@
+# Import the required functions
+def prime_factorization(n):
+    factors = []  
+    divisor = 2   
+
+    # Check for the smallest prime factor first (i.e., 2)
+    while n % divisor == 0:
+        count = 0  
+        while n % divisor == 0:
+            n //= divisor  
+            count += 1      
+        factors.append((divisor, count))  
+
+    # Check for all odd numbers as potential divisors starting from 3
+    divisor = 3
+    while divisor * divisor <= n:
+        if n % divisor == 0:
+            count = 0
+            while n % divisor == 0:
+                n //= divisor
+                count += 1
+            factors.append((divisor, count))
+        divisor += 2  
+
+    # If there's any prime factor larger than sqrt(n) left
+    if n > 1:
+        factors.append((n, 1))
+
+    return factors
+
+
+def aggregate_weather_data(records):
+    city_data = {}
+
+    for record in records:
+        city = record.get('city')
+        temperature = record.get('temperature')
+        humidity = record.get('humidity')
+
+        if city not in city_data:
+            city_data[city] = {
+                'total_temperature': 0,
+                'temp_count': 0,
+                'total_humidity': 0,
+                'humidity_count': 0
+            }
+
+        if temperature is not None:
+            city_data[city]['total_temperature'] += temperature
+            city_data[city]['temp_count'] += 1
+
+        if humidity is not None:
+            city_data[city]['total_humidity'] += humidity
+            city_data[city]['humidity_count'] += 1
+
+    result = {}
+    for city, data in city_data.items():
+        avg_temp = data['total_temperature'] / data['temp_count'] if data['temp_count'] > 0 else None
+        avg_humidity = data['total_humidity'] / data['humidity_count'] if data['humidity_count'] > 0 else None
+        result[city] = {
+            'average_temperature': avg_temp,
+            'average_humidity': avg_humidity
+        }
+
+    return result
+
+
+def main():
+    while True:
+        print("\nWelcome to the Basic Application")
+        print("1. Prime Factorization")
+        print("2. Weather Data Aggregation")
+        print("3. Exit")
+        choice = input("Choose an option (1, 2, or 3): ")
+
+        if choice == "1":
+            # Prime factorization
+            try:
+                num = int(input("Enter a number to factorize: "))
+                if num > 1:
+                    factors = prime_factorization(num)
+                    print(f"Prime factorization of {num}: {factors}")
+                else:
+                    print("Please enter a number greater than 1.")
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
+
+        elif choice == "2":
+            # Weather data aggregation
+            records = []
+            while True:
+                city = input("Enter city name (or 'done' to finish): ")
+                if city.lower() == 'done':
+                    break
+                try:
+                    temp = input(f"Enter temperature for {city} (or press Enter to skip): ")
+                    temp = float(temp) if temp else None
+
+                    humidity = input(f"Enter humidity for {city} (or press Enter to skip): ")
+                    humidity = float(humidity) if humidity else None
+
+                    records.append({'city': city, 'temperature': temp, 'humidity': humidity})
+
+                except ValueError:
+                    print("Invalid input. Please enter numeric values for temperature and humidity.")
+
+            # Aggregate the weather data
+            if records:
+                aggregated_data = aggregate_weather_data(records)
+                print("\nAggregated Weather Data:")
+                for city, data in aggregated_data.items():
+                    print(f"{city} - Average Temperature: {data['average_temperature']}, Average Humidity: {data['average_humidity']}")
+            else:
+                print("No data to aggregate.")
+
+        elif choice == "3":
+            print("Exiting the application. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please choose a valid option.")
+
+
+if __name__ == "__main__":
+    main()
